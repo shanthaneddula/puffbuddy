@@ -56,7 +56,7 @@ export default function ImporterPage() {
     try {
       const { error } = await supabase.auth.signInWithOtp({
         email,
-        options: { emailRedirectTo: window.location.origin + "/importer" }
+        options: { emailRedirectTo: "https://puffbuddy-importer-preview.vercel.app/importer" }
       });
       if (error) throw error;
       setMessage("Check your email for a secure sign-in link.");
