@@ -4,7 +4,7 @@ import {
   normalizeIdentityPart,
   buildProductIdentity,
   compareProductIdentity,
-} from "./identity.js";
+} from "./identity.mjs";
 
 test("normalizes accents, punctuation, ampersands, and spacing", () => {
   assert.equal(normalizeIdentityPart("  GRAV® & Co.  "), "grav and co");
