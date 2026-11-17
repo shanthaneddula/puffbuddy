@@ -43,3 +43,18 @@ The Git branch `integration/app-source` is a source-control baseline. It is not 
 - QR sharing encodes a small product list in the URL; use server-side share tokens for durable links and larger lists.
 - Product import, source verification, variant hierarchy, category editor, request inbox, audit history, and rate limiting are not implemented yet.
 - Product image URLs should be official or authorized product images; staff should verify image-to-model matching before publishing.
+
+
+## Importer preview email sign-in redirect
+
+The importer uses the fixed preview callback URL `https://puffbuddy-importer-preview.vercel.app/importer` so local development origins cannot leak into email sign-in links.
+
+In the Supabase development project (`puffbuddy-importer-dev`), configure **Authentication → URL Configuration**:
+
+- **Site URL:** `https://puffbuddy-importer-preview.vercel.app`
+- **Redirect URLs:** add `https://puffbuddy-importer-preview.vercel.app/**`
+- Keep `http://localhost:3000/**` only for intentional local development; it must not be the Site URL.
+
+Also check **Authentication → Email Templates → Magic Link**. The link must use Supabase's `{{ .ConfirmationURL }}` variable (or an equivalent link that preserves Supabase's generated `redirect_to` parameter). Do not hard-code `http://localhost:3000` or `{{ .SiteURL }}` as the final destination.
+
+The Vercel preview alias is `https://puffbuddy-importer-preview.vercel.app`. Test a newly requested email after saving these settings; previously sent magic links retain their original redirect and should not be reused.
