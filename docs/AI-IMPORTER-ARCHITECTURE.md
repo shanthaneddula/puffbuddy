@@ -83,7 +83,7 @@ Requirements:
 
 ## 5. Queue and execution model
 
-Use a durable Postgres-backed queue (Supabase Queues / pgmq) for work that must survive request termination. A request handler should enqueue and return a batch ID; workers process small, retryable units. Do not rely on an Edge Function's `waitUntil` background task as the only durable job store.
+Use a durable Postgres-backed queue (Supabase Queues / pgmq) for work that must survive request termination. A request handler should enqueue and return a batch ID; workers process small, retryable units. Supabase documents durable messages, visibility timeouts, and archival for Queues. Do not rely on an Edge Function's `waitUntil` background task as the only durable job store: the Free Edge Function wall-clock limit is 150 seconds, and background tasks are still subject to runtime limits. Supabase currently labels the Queues feature Public Alpha, so verify its availability and operational status in this project before relying on it for production workloads.
 
 Jobs must be idempotent and have:
 - bounded attempts and exponential backoff with jitter;
