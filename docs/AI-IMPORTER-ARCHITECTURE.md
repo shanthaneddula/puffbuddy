@@ -1,6 +1,6 @@
 # Puffbuddy AI Product Importer — Foundation Architecture
 
-Status: proposed design; no production database changes or provider credentials required yet.
+Status: first no-cost development implementation deployed. This is a URL-based research and human-review MVP, not yet the full AI/search/publish workflow. Production kiosk remains unchanged.
 
 ## 1. Goal and boundaries
 
@@ -175,3 +175,28 @@ Do not adopt Firecrawl or a large browser automation stack merely because it is 
 - Image previews correspond to the exact model/variant being reviewed.
 - No external provider key or privileged Supabase key reaches browser code.
 - Existing kiosk and existing catalog records remain unchanged throughout preview development.
+
+
+## 10. Implemented development MVP and remaining gates
+
+The current development implementation lives in the `puffbuddy-importer-dev` Supabase project and the `feature/ai-product-importer-foundation` Git branch.
+
+Implemented:
+- Staff email OTP sign-in and server-side email allowlist check.
+- Separate `/importer` route in the Vercel preview project.
+- Supabase Edge Function `importer-workflow`, with JWT verification.
+- Staff-submitted URL import (up to five pages per batch), bounded HTML extraction, Schema.org Product JSON-LD parsing, page title/H1 and metadata extraction.
+- Candidate image URL discovery from product JSON-LD, Open Graph and page image elements.
+- Source evidence, candidate review states, and approved JSON export.
+- Importer schema access restricted to the server-side `service_role`; `anon` and `authenticated` have no schema usage or table privileges.
+- SQL migrations and Edge Function source tracked in Git.
+
+Not implemented / not claimed:
+- Broad product discovery from search terms. Staff must provide URLs.
+- LLM enrichment. No free model provider credential has been configured; extraction is deterministic and must not be labelled AI-verified.
+- Automatic downloading/re-encoding of candidate images. Image URLs are previews only and rights remain unverified.
+- Direct publishing into the existing live kiosk catalog. Approved records export to JSON; cross-project publishing needs a separately secured handoff.
+- End-to-end authenticated browser import test. Confirm the Supabase Auth redirect allow-list for the current preview hostname and run a test with a real product page before treating this as operational.
+- Socket-level DNS pinning. The fetcher validates DNS before requests, but the runtime fetch does not pin the resolved address; keep arbitrary URL fetching staff-only and development-only until a hardened fetch proxy is used.
+
+Do not merge or promote this feature until the outstanding gates above are resolved. Do not add paid providers or production credentials without explicit approval.
